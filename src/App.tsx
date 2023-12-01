@@ -1,6 +1,5 @@
 import { JSX, h } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import logo from './logo.png'
 import './App.css'
 
 function App (): JSX.Element {
@@ -12,10 +11,34 @@ function App (): JSX.Element {
     return () => clearTimeout(timer)
   }, [count, setCount])
   // Return the App component.
+
+  const [html, setHtml] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:3010')
+      .then(async response => {
+        if (response.ok) {
+          const rawText = await new Response(response.body).text()
+          const xmlText = rawText
+            .replace(/<meta\b([^>]*)>/gi, '<meta$1 />')
+            .replace(/<link\b([^>]*)>/gi, '<link$1 />')
+            .replace(/<br\b([^>]*)>/gi, '<br$1 />')
+            .replace(/<hr\b([^>]*)>/gi, '<hr$1 />')
+          const parser = new DOMParser()
+          const xml = parser.parseFromString(xmlText, 'text/xml')
+
+          xml.querySelectorAll('style,br').forEach(el => el.remove())
+          setHtml(xml.querySelector('body')?.innerHTML || '');
+        } else {
+          console.error('ERROR')
+        }
+      })
+  }, [])
+
+  console.log(html);
   return (
-    <div className='App'>
-      <header className='App-header'>
-        <img src={logo} className='App-logo' alt='logo' />
+    <div className="App">
+      <header className="App-header">
         <p>
           Edit <code>src/App.jsx</code> and save to reload.
         </p>
@@ -24,15 +47,17 @@ function App (): JSX.Element {
         </p>
         <p>
           <a
-            className='App-link'
-            href='https://preactjs.com'
-            target='_blank'
-            rel='noopener noreferrer'
+            className="App-link"
+            href="https://preactjs.com"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Learn Preact
           </a>
         </p>
       </header>
+
+      <section dangerouslySetInnerHTML={{ __html: html }}>{html}</section>
     </div>
   )
 }

@@ -9,7 +9,8 @@
     "format": "prettier --write \"src/**/*.{js,jsx}\"",
     "lint": "ts-standard --fix",
     "prettier": "prettier --check \"src/**/*.{js,jsx}\"",
-    "test": "web-test-runner \"src/**/*.{spec,test}.{ts,tsx}\""
+    "test": "web-test-runner \"src/**/*.{spec,test}.{ts,tsx}\"",
+    "server": "node ./src/server/index.js"
   },
   "keywords": [
     "snowpack",
@@ -20,6 +21,8 @@
   "author": "Adrian Lafond <mail@adrianlafond.com>",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "preact": "^10.19.2"
   },
   "devDependencies": {
